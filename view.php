@@ -38,7 +38,7 @@ $context = context_course::instance($courseid);
 
 $quiz = get_coursemodule_from_id('quiz', $quizid, $courseid); //course quiz module cm 
 $quizModule = context_module::instance($quizid);
-// $quizObj = new quiz($quiz, $quiz, $course->id, $quizModule);
+
 $quizObj = quiz::create($quiz->instance, $USER->id);
 $quizObj->preload_questions();
 $quizObj->load_questions();
@@ -46,12 +46,10 @@ $questions = $quizObj->get_questions();
 
 // Must pass login
 require_login($course);
-$questionArray = [];
-foreach($questions as $qstn){
-    array_push($questionArray, $qstn->questiontext);
-}
 
 
+// print_object($questionArray);
+// die;
 
 $PAGE->set_title($course->fullname . ': ' . get_string('pluginname', 'local_quizhelp'));
 $PAGE->set_heading($course->fullname . ': ' . get_string('pluginname', 'local_quizhelp'));
@@ -66,12 +64,24 @@ $role = key($roles);
 $rolename = $roles[$role]->shortname;
 
 
+$questionArray = [];
+foreach($questions as $qstn){
+    $editUrl = "addresoruce.php?id={$courseid}&quizid={$quizid}&qid={$qstn->id}";
+    $resourceObjs = $DB->get_records('local_quizhelp_resources',['questionid'=>$qstn->id]);
+    $resources = [];
+    foreach($resourceObjs as $res){
+        array_push($resources, $res->resources);
+    }
+    array_push($questionArray, array('question_text'=>strip_tags($qstn->questiontext),'resources'=>$resources, 'edit_link'=>$editUrl));
+}
 
+// print_object($questionArray);
+// die;
 
 $editContext = ['questions'=>$questionArray];
 $viewContext = ['name'=>'VIEWING ONLY'];
 
-
+// $resources 
 
 echo $OUTPUT->header();
 

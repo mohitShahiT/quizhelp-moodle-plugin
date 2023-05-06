@@ -34,17 +34,13 @@
 }}
 
 <div class="card-container">
-
-    
-    {{#questions}}
         <div class= "message-container">
-            <p>{{question_text}}</p>
-            {{#resources}}
-                <p>resource: {{.}}</p>
-            {{/resources}}
-            <a href = {{edit_link}}>add resource</a>
+            <p><b>{{question}}</b></p>
+            {{#options}}
+                <p>{{option}} {{#fraction}}<b>Correct answer</b>{{/fraction}}</p>
+            {{/options}}
+            {{{form}}}
         </div>
-    {{/questions}}
     
         
 </div>
