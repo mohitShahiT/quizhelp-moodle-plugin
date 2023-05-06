@@ -18,7 +18,7 @@
  * Form for taking which quiz to add resoruces to or to show resources.
  *
  * @package     local_quizhelp
- * @copyright   2023 Mohit Shahi <moheetshahi92@gmail.com>
+ * @copyright   2023
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -18,7 +18,7 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     local_quizhelp
- * @copyright   2023 Mohit Shahi <moheetshahi92@gmail.com>
+ * @copyright   2023
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -18,7 +18,7 @@
  * Main interface to Moodle PHP code check
  *
  * @package    local_quizhelp
- * @copyright  2012 Mohit Shahi
+ * @copyright  
  * @license    ////////////////////////////http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
