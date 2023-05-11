@@ -35,6 +35,15 @@
 
 <div class="card-container">
 
-    <h1>{{name}}</h1>
+    <h1>RESOURCES</h1>
+    {{#questions}}
+        <div class= "message-container">
+            <p>{{question_text}}</p>
+            {{#resources}}
+                <p>resource: {{.}}</p>
+            {{/resources}}
+            <a href = {{edit_link}}>add resource</a>
+        </div>
+    {{/questions}}
         
 </div>

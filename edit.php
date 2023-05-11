@@ -44,27 +44,79 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/local/quizhelp/edit.php', ['id' => $courseid]));
 $PAGE->set_pagetype('course-view-' . $course->format);  // To get the blocks exactly like the course.
- 
+
+
+
+//determining if the user is teacher or student
+$roles = get_user_roles($context, $USER->id, true);
+$role = key($roles);
+$rolename = $roles[$role]->shortname;
+
+if($rolename == "editingteacher" || $rolename == "teacher" ){
+    $canEdit = true;
+}
+else{
+    $canEdit = false;
+}
 
 $quizes = get_coursemodules_in_course('quiz', $courseid);
-
+// print_object($quizes);
 $quizOptions = array();
 $quizOptionIndex = 0;
+
+//getting attempts if the user is student
+$attemptedQuizes = [];
 foreach($quizes as $quiz){
     if(!$quiz->deletioninprogress){
         $quiz->optionIndex = $quizOptionIndex++;
         array_push($quizOptions, $quiz->name);
     }
+    if(!$canEdit){
+        $quizAttempt = $DB->get_records('quiz_attempts', ['quiz'=>$quiz->instance, 'userid'=>$USER->id]);
+        if($quizAttempt){
+            foreach($quizAttempt as $qzat){
+                array_push($attemptedQuizes, $qzat);
+            }
+        }
+    }
+    // $qz = $DB->get_record('quiz', array('id' => $quiz->instance), '*', MUST_EXIST);
 }
-$roles = get_user_roles($context, $USER->id, true);
-$role = key($roles);
-$rolename = $roles[$role]->shortname;
-if($rolename == "editingteacher" || $rolename == "teacher" ){
-    $form = new quiz_selection_form(null, array('quiz_options'=>$quizOptions, 'canEdit'=>true, 'id'=>$courseid));
+
+//quiz course module of attempted quiz by the student
+
+
+
+if(!empty($attemptedQuizes)){
+    $attemptedQuizecms = [];
+    foreach($attemptedQuizes as $atquiz){
+        $qzcm = get_coursemodule_from_instance('quiz',$atquiz->quiz, $courseid);
+        $qzcm->attemptid = $atquiz->id;
+        $qzcm->attempt = $atquiz->attempt;
+        array_push($attemptedQuizecms, $qzcm);
+    }
+    // print_object($attemptedQuizecms);
+    $quizOptionIndex = 0;
+    $quizOptionsStd = [];
+    foreach($attemptedQuizecms as $atqzcm){
+        if(!$atqzcm->deletioninprogress){
+            $atqzcm->optionIndex = $quizOptionIndex++;
+            array_push($quizOptionsStd, $atqzcm->name." (attempt {$atqzcm->attempt})");
+        }
+    }
+    $quizOptions = $quizOptionsStd;
 }
-else{
-    $form = new quiz_selection_form(null, array('quiz_options'=>$quizOptions, 'canEdit'=>false, 'id'=>$courseid));
-}
+
+
+// if(!empty($attemptedQuizecms)){
+//     print_object($quizOptions);
+//     print_object($attemptedQuizecms);
+//     die;
+// }
+
+
+
+
+$form = new quiz_selection_form(null, array('quiz_options'=>$quizOptions, 'canEdit'=>$canEdit, 'id'=>$courseid));
 
 
 
@@ -73,6 +125,15 @@ if($form->is_cancelled()){
 }
 else if($formData = $form->get_data()){
     // var_dump($courseid);
+    if(!empty($attemptedQuizecms)){
+        // print_object($formData);
+        // die;
+        foreach($attemptedQuizecms as $quiz){
+            if($quiz->optionIndex == (int)$formData->quiz){
+                redirect(new moodle_url('/local/quizhelp/view.php', array('id'=>$courseid, 'quizid'=>$quiz->id, 'attemptid'=>$quiz->attemptid)));
+            }
+        }
+    }
     foreach($quizes as $quiz){
         if($quiz->optionIndex == (int)$formData->quiz){
             redirect(new moodle_url('/local/quizhelp/view.php', array('id'=>$courseid, 'quizid'=>$quiz->id)));
@@ -84,7 +145,11 @@ echo $OUTPUT->header();
 
 
 if(!empty($quizOptions)){
+    if(!$canEdit){
+        core\notification::add('Resources can only be seen for the quiz you have attempted.', core\output\notification::NOTIFY_INFO);
+    }
     $form->display();
+
 }
 else{
     core\notification::add('No quiz in the course.', core\output\notification::NOTIFY_WARNING);

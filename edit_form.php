@@ -19,7 +19,6 @@ class quiz_selection_form extends moodleform {
 
         $this->add_action_buttons(true, 'Show Resources');
 
-        
     }
 
     // Custom validation should be added here.

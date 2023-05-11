@@ -28,11 +28,13 @@ require_once('../../mod/quiz/attemptlib.php');
 require_once('../../mod/quiz/accessmanager.php');
 require_once('../../lib/questionlib.php');
 require_once('../../mod/quiz/classes/question/bank/qbank_helper.php');
+require_once('../../mod/quiz/classes/external.php');
 require_once($CFG->dirroot . '/local/quizhelp/lib.php');
 use mod_quiz\question\bank\qbank_helper;
 
 $courseid = required_param('id', PARAM_INT);
 $quizid = required_param('quizid', PARAM_INT);
+$attemptid = optional_param('attemptid',0, PARAM_INT);
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $context = context_course::instance($courseid);
 
@@ -78,20 +80,32 @@ foreach($questions as $qstn){
 // print_object($questionArray);
 // die;
 
-$editContext = ['questions'=>$questionArray];
-$viewContext = ['name'=>'VIEWING ONLY'];
+if($attemptid){
+
+    $review = mod_quiz_external::get_attempt_review($attemptid);
+    $newQuestionArray = [];
+    for($i = 0; $i<sizeof($questionArray); $i++){
+        if((float)$review['questions'][$i]['mark']<1){
+            array_push($newQuestionArray, array('question_text'=>$questionArray[$i]['question_text'],'resources'=>$questionArray[$i]['resources']));
+        }
+    }
+    $questionArray = $newQuestionArray;
+}
+
+
+$templateContext = ['questions'=>$questionArray];
 
 // $resources 
 
 echo $OUTPUT->header();
 
 // echo print_object($questionArray);
-
-if($rolename == "editingteacher" || $rolename == "teacher" ){
-    echo $OUTPUT->render_from_template('local_quizhelp/editresources', $editContext);
-}
-else{
-    echo $OUTPUT->render_from_template('local_quizhelp/viewresources', $viewContext);
-}
+echo $OUTPUT->render_from_template('local_quizhelp/editresources', $templateContext);
+// if($rolename == "editingteacher" || $rolename == "teacher" ){
+//     echo $OUTPUT->render_from_template('local_quizhelp/editresources', $editContext);
+// }
+// else{
+//     echo $OUTPUT->render_from_template('local_quizhelp/viewresources', $viewContext);
+// }
 
 echo $OUTPUT->footer();
