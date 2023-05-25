@@ -72,7 +72,7 @@ foreach($questions as $qstn){
     $resourceObjs = $DB->get_records('local_quizhelp_resources',['questionid'=>$qstn->id]);
     $resources = [];
     foreach($resourceObjs as $res){
-        array_push($resources, $res->resources);
+        array_push($resources, ['resource'=>$res->resources, 'isLink'=>$res->is_link]);
     }
     array_push($questionArray, array('question_text'=>strip_tags($qstn->questiontext),'resources'=>$resources, 'edit_link'=>$editUrl));
 }

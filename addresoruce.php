@@ -64,6 +64,12 @@ if($form->is_cancelled()){
 }
 else if($formData = $form->get_data()){
     $record = new stdClass;
+    if(filter_var($formData->resource, FILTER_VALIDATE_URL)){
+        $record->is_link = 1;
+    }
+    else{
+        $record->is_link = 0;
+    }
     $record->resources = $formData->resource;
     $record->timecreated = time();
     $record->questionid = $quesitonid;

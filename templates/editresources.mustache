@@ -40,7 +40,9 @@
             <div class = "question-div"><p class="question">{{question_text}}</p>{{#edit_link}}<a href = {{edit_link}}>add resource</a>{{/edit_link}}</div>
             <p class = "resource-title">Here are the resources for this question:</p> 
             {{#resources}}
-                    <div class="resource">{{.}}</div>
+                    <ul class="resource-list">
+                        <li class="resource">{{#isLink}}<a href= {{resource}} target="_blank">This article might help.</a>{{/isLink}} {{^isLink}}{{resource}}{{/isLink}} </li>
+                    </ul>
             {{/resources}}
         </div>
     {{/questions}}
