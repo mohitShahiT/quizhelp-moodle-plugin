@@ -1,0 +1,33 @@
+.main-resource-container{
+    padding: 20px;
+    display: flex;    
+    justify-content: center;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    flex-direction: column;
+    gap: 10px;
+}
+.question-div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.resource-title{
+    color:grey;
+}
+.question-resource-container:not(:last-child){
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgb(194, 194, 194);
+}
+
+.question{
+    font-size: 1.2rem;
+    color: black;
+    margin: 0;
+}
+
+.resource {
+    font-size: 1.15rem;
+    padding: 8px 15px;
+}
+

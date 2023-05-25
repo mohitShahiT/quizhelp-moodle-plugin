@@ -46,7 +46,6 @@ $PAGE->set_url(new moodle_url('/local/quizhelp/edit.php', ['id' => $courseid]));
 $PAGE->set_pagetype('course-view-' . $course->format);  // To get the blocks exactly like the course.
 
 
-
 //determining if the user is teacher or student
 $roles = get_user_roles($context, $USER->id, true);
 $role = key($roles);

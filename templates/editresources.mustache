@@ -33,18 +33,15 @@
     }
 }}
 
-<div class="card-container">
+<div class="main-resource-container">
 
-    
     {{#questions}}
-        <div class= "message-container">
-            <p>{{question_text}}</p>
+        <div class="question-resource-container">
+            <div class = "question-div"><p class="question">{{question_text}}</p>{{#edit_link}}<a href = {{edit_link}}>add resource</a>{{/edit_link}}</div>
+            <p class = "resource-title">Here are the resources for this question:</p> 
             {{#resources}}
-                <p>resource: {{.}}</p>
+                    <div class="resource">{{.}}</div>
             {{/resources}}
-            {{#edit_link}}
-            <a href = {{edit_link}}>add resource</a>
-            {{/edit_link}}
         </div>
     {{/questions}}
     
